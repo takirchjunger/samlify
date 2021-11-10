@@ -8,7 +8,7 @@ import { MetadataSpConstructor, MetadataSpOptions } from './types';
 import { namespace, elementsOrder as order } from './urn';
 import libsaml from './libsaml';
 import { isNonEmptyArray, isString } from './utility';
-import * as xml from 'xml';
+import xml from 'xml';
 
 export interface SpMetadataInterface extends MetadataInterface {
 
@@ -100,10 +100,8 @@ export class SpMetadata extends Metadata {
       }
 
       if (isNonEmptyArray(singleLogoutService)) {
-        let indexCount = 0;
         singleLogoutService.forEach(a => {
           const attr: any = {
-            index: String(indexCount++),
             Binding: a.Binding,
             Location: a.Location,
           };

@@ -7,6 +7,7 @@
 export enum BindingNamespace {
   Redirect = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
   Post = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+  SimpleSign = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign',
   Artifact = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact'
 }
 
@@ -47,6 +48,7 @@ const namespace = {
   binding: {
     redirect: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
     post: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+    simpleSign: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign',
     artifact: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
   },
   names: {
@@ -150,6 +152,7 @@ const algorithms = {
       AES_128: 'http://www.w3.org/2001/04/xmlenc#aes128-cbc',
       AES_256: 'http://www.w3.org/2001/04/xmlenc#aes256-cbc',
       TRI_DEC: 'http://www.w3.org/2001/04/xmlenc#tripledes-cbc',
+      AES_128_GCM: 'http://www.w3.org/2009/xmlenc11#aes128-gcm'
     },
     key: {
       RSA_OAEP_MGF1P: 'http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p',
@@ -183,6 +186,7 @@ const wording = {
   binding: {
     redirect: 'redirect',
     post: 'post',
+    simpleSign: 'simpleSign',
     artifact: 'artifact',
   },
   certUse: {

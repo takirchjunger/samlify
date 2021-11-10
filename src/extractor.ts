@@ -1,4 +1,4 @@
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 import { select, SelectedValue } from 'xpath';
 import { uniq, last, zipObject, notEmpty } from './utility';
 import camelCase from 'camelcase';
@@ -98,7 +98,7 @@ export const logoutResponseStatusFields = [
   }
 ];
 
-export const loginResponseFields: ((asserion: any) => ExtractorFields) = assertion => [
+export const loginResponseFields: ((assertion: any) => ExtractorFields) = assertion => [
   {
     key: 'conditions',
     localPath: ['Assertion', 'Conditions'],
@@ -253,7 +253,7 @@ export function extract(context: string, fields) {
         index: ['Name'],
         attributePath: ['AttributeValue'],
         attributes: []
-      } 
+      }
     */
     if (index && attributePath) {
       // find the index in localpath
@@ -286,11 +286,12 @@ export function extract(context: string, fields) {
         return null;
       });
       // aggregation
-      const obj = zipObject(parentAttributes, childAttributes);
+      const obj = zipObject(parentAttributes, childAttributes, false);
       return {
         ...result,
         [key]: obj
       };
+
     }
     // case: fetch entire content, only allow one existence
     /*
@@ -308,7 +309,7 @@ export function extract(context: string, fields) {
         value = node[0].toString();
       }
       if (node.length > 1) {
-        value = node.map(n => n.toString()); 
+        value = node.map(n => n.toString());
       }
       return {
         ...result,
@@ -329,7 +330,7 @@ export function extract(context: string, fields) {
       const childXPath = `${buildAbsoluteXPath([last(localPath)])}${attributeXPath}`;
       const attributeValues = baseNode.map((node: string) => {
         const nodeDoc = new dom().parseFromString(node);
-        const values = select(childXPath, nodeDoc).reduce((r: any, n: Attr) => { 
+        const values = select(childXPath, nodeDoc).reduce((r: any, n: Attr) => {
           r[camelCase(n.name)] = n.value;
           return r;
         }, {});
@@ -365,14 +366,15 @@ export function extract(context: string, fields) {
       }
     */
     if (attributes.length === 0) {
-      let attributeValue: SelectedValue[] | Array<(string | null)> | null = null;
+      let attributeValue: SelectedValue[] | (string | null)[] | null = null;
       const node = select(baseXPath, targetDoc);
       if (node.length === 1) {
         const fullPath = `string(${baseXPath}${attributeXPath})`;
         attributeValue = select(fullPath, targetDoc);
       }
       if (node.length > 1) {
-        attributeValue = node.map((n: Node) => n.firstChild!.nodeValue);
+        attributeValue = node.filter((n: Node) => n.firstChild)
+          .map((n: Node) => n.firstChild!.nodeValue);
       }
       return {
         ...result,

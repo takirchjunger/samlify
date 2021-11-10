@@ -5,7 +5,7 @@
 ?> You can either choose to import from metadata plus optional paramters, or defined properties plus optional parameters.
 
 - **metadata: String**<br/>
-  IDP issued metadata to declare the structure and scope of the entity, as a common contract on how sso/slo should be proceeded.
+  SP issued metadata to declare the structure and scope of the entity, as a common contract on how sso/slo should be proceeded.
 
 ```js
 const sp = new ServiceProvider({
@@ -21,7 +21,7 @@ const sp = new ServiceProvider({
 
 OR
 
-- **entiyID: String**<br/> Entity identifier. It is used to identify your entity, and match the equivalence in each saml request/response.
+- **entityID: String**<br/> Entity identifier. It is used to identify your entity, and match the equivalence in each saml request/response.
 
 - **authnRequestsSigned: Boolean**<br/>
   _Optional_: Declare if sp signs the authn request, reflects to the `AuthnRequestsSigned` in sp metadata, default to `false`.
@@ -76,3 +76,27 @@ const sp = new ServiceProvider({
   
 - **generateID: (): String**<br/>
   A function to generate the document identifier in root node. Default to `_${UUID_V4}`.
+
+- **clockDrifts: [Number, Number]**<br/>
+  A time range allowing for drifting the range that specified in the SAML document. The first one is for the `notBefore` time and the second one is for `notOnOrAfter`. Default value of both drift value is `0`. The unit is in `ms`.
+
+  For example, if you set `[-5000, 3000]`. The value can be either positive or negative in order to take care of the flexibility.
+
+  ```console
+  # tolerated timeline
+  notBefore - 5s >>>>>>> notBefore >>>>>>> notAfter ---- notAfter + 3s 
+
+  # new valid time
+  notBefore - 5s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> notAfter + 3s 
+  ```
+
+  Another example, if you don't set, the default drift tolerance is `[0, 0]`. The valid range is trivial.
+
+  ```console
+  # valid time
+  notBefore >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> notAfter
+  ```
+
+  ?> The flow will skip the validation when there is no `notBefore` and `notOnOrAfter` at the same time.
+
+  ?> See [SAML Core P.19](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) for more detail.
